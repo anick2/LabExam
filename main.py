@@ -9,6 +9,7 @@ in1, in2 = 0, 0
 colored = True
 
 def getFile():
+    global filename
     filename = filedialog.askopenfilename()
     try:
         f = open(filename)
@@ -22,8 +23,11 @@ def getFile():
         l['bg'] = '#CCCCFF'
         l['text'] = filename.split('/')[-1]
 
-def saveFile():
-    file = filedialog.asksaveasfilename(filetypes=(("text files", "*.txt"), ("All files", "*.*")))
+def saveFile(event, save_type):
+    if (save_type == 'saveas'):
+        file = filedialog.asksaveasfilename(filetypes=(("text files", "*.txt"), ("All files", "*.*")))
+    else:
+        file = filename
     try:
         f = open(file, 'w')
     except (FileNotFoundError, TypeError):
@@ -31,7 +35,6 @@ def saveFile():
     else:
         s = text.get(1.0, END)
         out = subprocess.run(["xxd", "-r", "-g1", "-", file], input=s.encode("UTF-8"), stdout=subprocess.PIPE)
-        deleteText()
         f.close()
 
 def findSym(event):
@@ -126,10 +129,10 @@ h = root.winfo_screenheight() // 2 - 200
 root.geometry('+{}+{}'.format(w, h) )
 
 l = Label(bg = '#FFFFCC')
-l.grid(row = 0, columnspan=5)
+l.grid(row = 0, columnspan=6)
 ek = Entry()
 fr = Frame()
-fr.grid(row =1, columnspan=5, sticky=N+W+E)
+fr.grid(row =1, columnspan=6, sticky=N+W+E)
 text = Text(fr, bg = '#CCCCCC', fg = '#006600', wrap=NONE)
 text.pack(side=LEFT)
 scroll = Scrollbar(fr, command=text.yview)
@@ -138,13 +141,17 @@ text.config(yscrollcommand=scroll.set)
 
 b1 = Button(text="Open", command=getFile, width=8, height=2, fg = "#123FEA")
 b1.grid(row=2, column = 0, sticky=S)
-b2 = Button(text="Save", command=saveFile, width=8, height=2, fg = "#123FEA")
-b2.grid(row=2, column = 1, sticky=S)
+b2 = Button(text="Save", width=8, height=2, fg = "#123FEA")
+b2.grid(row=2, column = 4, sticky=S)
 b3 = Button(text="Find", command=findText, width=8, height=2, fg = "#123FEA")
 b3.grid(row=2, column = 2, sticky=S)
 b4 = Button(text="Clear", command=deleteText, width=8, height=2, fg = "#123FEA")
 b4.grid(row=2, column = 3, sticky=S)
 b5 = Button(text="Color", command=colorText, width=8, height=2, fg = "#123FEA")
-b5.grid(row=2, column = 4, sticky=S)
+b5.grid(row=2, column = 1, sticky=S)
+b6 = Button(text="Save As", width=8, height=2, fg = "#123FEA")
+b6.grid(row=2, column = 5, sticky=S)
+b6.bind('<Button-1>', lambda event, f="saveas": saveFile(event, f))
+b2.bind('<Button-1>', lambda event, f="save": saveFile(event, f))
 
 root.mainloop()
