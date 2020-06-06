@@ -20,17 +20,15 @@ def getFile():
         l['text'] = filename.split('/')[-1]
 
 def saveFile():
-    file_name = filedialog.asksaveasfilename(filetypes=(("text files", "*.txt"), ("All files", "*.*")))
+    file = filedialog.asksaveasfilename(filetypes=(("text files", "*.txt"), ("All files", "*.*")))
     try:
-        f = open(file_name, 'w')
+        f = open(file, 'w')
     except (FileNotFoundError, TypeError):
         messagebox.showinfo("Save File", "File not saved...")
     else:
         s = text.get(1.0, END)
-        f.write(s)
-        sc = 'cat {} | xxd -r {}'.format(file_name, file_name)
-        s = subprocess.check_output(sc.split())
-        f.write(s)
+        out = subprocess.run(["xxd", "-r", "-g1", "-", file], input=s.encode("UTF-8"), stdout=subprocess.PIPE)
+        text.delete(1.0, END)
         f.close()
 
 root = Tk()
