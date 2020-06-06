@@ -43,7 +43,7 @@ l.grid(row = 0, columnspan=2)
 
 fr = Frame()
 fr.grid(row =1, columnspan=2, sticky=N+W+E)
-text = Text(fr, bg = '#CCCCCC', fg = '#006600', width=50, height=20, wrap=NONE)
+text = Text(fr, bg = '#CCCCCC', fg = '#006600', wrap=NONE)
 text.pack(side=LEFT)
 scroll = Scrollbar(fr, command=text.yview)
 scroll.pack(fill=Y, side=LEFT)
